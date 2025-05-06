@@ -36,20 +36,13 @@ class Main extends PluginBase implements Listener {
     private bool $multiWorldActive;
     private array $worldScoreboards;
 
-    /**
-     * Called when the plugin is enabled
-     */
     public function onEnable(): void {
-        // Saving instance for API access
         self::$instance = $this;
 
-        // Save the default config.yml with comments
         $this->saveResource("config.yml", false);
 
-        // Log config loading
         $this->getLogger()->info("Loading config.yml...");
         
-        // Try to load config.yml
         try {
             $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
         } catch (\Exception $e) {
@@ -59,11 +52,10 @@ class Main extends PluginBase implements Listener {
             $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
         }
 
-        // Load scoreboard settings
         $this->scoreboardEnabled = $this->config->getNested("scoreboard.enabled", true);
         $this->scoreboardTitle = $this->config->getNested("scoreboard.title", "§l§6ServerInfo");
         $this->flickerEnabled = $this->config->getNested("scoreboard.flicker", false);
-        $this->flickerPeriod = $this->config->getNested("scoreboard.period", 5) * 20; // Convert seconds to ticks
+        $this->flickerPeriod = $this->config->getNested("scoreboard.period", 5) * 20;
         $this->flickerTitles = $this->config->getNested("scoreboard.titles", [
             "§l§6ServerInfo",
             "§l§eServerInfo",
@@ -87,7 +79,6 @@ class Main extends PluginBase implements Listener {
         $this->multiWorldActive = $this->config->getNested("scoreboard.multi_world.active", false);
         $this->worldScoreboards = $this->config->getNested("scoreboard.scoreboards", []);
 
-        // Log loaded settings for debugging
         $this->getLogger()->info("Scoreboard settings loaded:");
         $this->getLogger()->info("Enabled: " . ($this->scoreboardEnabled ? "true" : "false"));
         $this->getLogger()->info("Multi-world active: " . ($this->multiWorldActive ? "true" : "false"));
@@ -108,9 +99,8 @@ class Main extends PluginBase implements Listener {
             public function onRun(): void {
                 $this->plugin->updateScoreboards();
             }
-        }, 20); // Update every 1 second (20 ticks)
+        }, 20);
 
-        // Schedule a task for flickering titles if enabled globally or for any world
         $this->getScheduler()->scheduleRepeatingTask(new class($this) extends Task {
             private Main $plugin;
 
@@ -124,21 +114,13 @@ class Main extends PluginBase implements Listener {
         }, $this->flickerPeriod);
     }
 
-    /**
-     * Called when a player joins the server
-     * @param PlayerJoinEvent $event
-     */
     public function onPlayerJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
         $this->playerWorlds[$player->getName()] = $player->getWorld()->getFolderName();
-        $this->playerTitleIndices[$player->getName()] = 0; // Initialize title index for the player
+        $this->playerTitleIndices[$player->getName()] = 0; 
         $this->createScoreboard($player);
     }
 
-    /**
-     * Called when a player leaves the server
-     * @param PlayerQuitEvent $event
-     */
     public function onPlayerQuit(PlayerQuitEvent $event): void {
         $player = $event->getPlayer();
         $playerName = $player->getName();
@@ -154,22 +136,12 @@ class Main extends PluginBase implements Listener {
         }
     }
 
-    /**
-     * Called when a player sends a chat message
-     * Replaces placeholders in the chat message
-     * @param PlayerChatEvent $event
-     */
     public function onPlayerChat(PlayerChatEvent $event): void {
         $message = $event->getMessage();
-        // Replace placeholders in chat message
         $message = $this->replacePlaceholders($message);
         $event->setMessage($message);
     }
 
-    /**
-     * Creates a scoreboard for a player
-     * @param Player $player
-     */
     private function createScoreboard(Player $player): void {
         if (!$this->scoreboardEnabled) {
             return;
@@ -178,7 +150,6 @@ class Main extends PluginBase implements Listener {
         $worldName = $player->getWorld()->getFolderName();
         $shouldDisplay = false;
 
-        // Check if the scoreboard should be displayed based on multi-world settings
         if ($this->multiWorldActive) {
             if (isset($this->worldScoreboards[$worldName]["lines"])) {
                 $shouldDisplay = true;
@@ -194,19 +165,16 @@ class Main extends PluginBase implements Listener {
             return;
         }
 
-        // Determine the title to use
         $title = $this->scoreboardTitle;
         if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["title"])) {
             $title = $this->worldScoreboards[$worldName]["title"];
         }
 
-        // Determine if flicker is enabled for this world
         $isFlickerEnabled = $this->multiWorldActive ? false : $this->flickerEnabled;
         if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["flicker"])) {
             $isFlickerEnabled = $this->worldScoreboards[$worldName]["flicker"];
         }
 
-        // If flicker is enabled, override the title with the current flickering title
         if ($isFlickerEnabled) {
             $titleIndex = $this->playerTitleIndices[$player->getName()] ?? 0;
             if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["flicker_titles"])) {
@@ -217,7 +185,6 @@ class Main extends PluginBase implements Listener {
             }
         }
 
-        // Create the scoreboard using SetDisplayObjectivePacket
         $packet = SetDisplayObjectivePacket::create(
             SetDisplayObjectivePacket::DISPLAY_SLOT_SIDEBAR,
             "server_info_" . $player->getName(),
@@ -227,15 +194,10 @@ class Main extends PluginBase implements Listener {
         );
         $player->getNetworkSession()->sendDataPacket($packet);
 
-        // Add lines to the scoreboard
         $this->scoreboards[$player->getName()] = true;
         $this->updateScoreboard($player);
     }
 
-    /**
-     * Updates the scoreboard for a player
-     * @param Player $player
-     */
     private function updateScoreboard(Player $player): void {
         if (!$this->scoreboardEnabled || !isset($this->scoreboards[$player->getName()])) {
             return;
@@ -244,7 +206,6 @@ class Main extends PluginBase implements Listener {
         $worldName = $player->getWorld()->getFolderName();
         $lines = $this->scoreboardLines;
 
-        // Use multi-world scoreboard if active and available
         if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["lines"])) {
             $lines = $this->worldScoreboards[$worldName]["lines"];
         } elseif ($this->multiWorldActive) {
@@ -253,22 +214,18 @@ class Main extends PluginBase implements Listener {
             return;
         }
 
-        // Remove the existing scoreboard to refresh it
         $this->hideScoreboard($player);
 
-        // Determine the title to use
         $title = $this->scoreboardTitle;
         if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["title"])) {
             $title = $this->worldScoreboards[$worldName]["title"];
         }
 
-        // Determine if flicker is enabled for this world
         $isFlickerEnabled = $this->multiWorldActive ? false : $this->flickerEnabled;
         if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["flicker"])) {
             $isFlickerEnabled = $this->worldScoreboards[$worldName]["flicker"];
         }
 
-        // If flicker is enabled, override the title with the current flickering title
         if ($isFlickerEnabled) {
             $titleIndex = $this->playerTitleIndices[$player->getName()] ?? 0;
             if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["flicker_titles"])) {
@@ -279,7 +236,6 @@ class Main extends PluginBase implements Listener {
             }
         }
 
-        // Recreate the scoreboard
         $packet = SetDisplayObjectivePacket::create(
             SetDisplayObjectivePacket::DISPLAY_SLOT_SIDEBAR,
             "server_info_" . $player->getName(),
@@ -289,21 +245,15 @@ class Main extends PluginBase implements Listener {
         );
         $player->getNetworkSession()->sendDataPacket($packet);
 
-        // Add lines to the scoreboard with fresh placeholder replacement
-        $score = count($lines) - 1; // Start from the highest score
+        $score = count($lines) - 1; 
         foreach ($lines as $line) {
             $processedLine = $this->replacePlaceholders($line, $player);
             $this->addLine($player, $score, $processedLine);
-            $score--; // Decrease score to maintain order
+            $score--; 
         }
     }
 
-    /**
-     * Adds a line to the player's scoreboard
-     * @param Player $player
-     * @param int $score
-     * @param string $text
-     */
+
     private function addLine(Player $player, int $score, string $text): void {
         $entry = new ScorePacketEntry();
         $entry->objectiveName = "server_info_" . $player->getName();
@@ -316,10 +266,6 @@ class Main extends PluginBase implements Listener {
         $player->getNetworkSession()->sendDataPacket($packet);
     }
 
-    /**
-     * Hides the scoreboard for a player
-     * @param Player $player
-     */
     private function hideScoreboard(Player $player): void {
         if (!isset($this->scoreboards[$player->getName()])) {
             return;
@@ -329,18 +275,13 @@ class Main extends PluginBase implements Listener {
         $player->getNetworkSession()->sendDataPacket($packet);
     }
 
-    /**
-     * Updates all players' scoreboards
-     */
     public function updateScoreboards(): void {
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             $playerName = $player->getName();
             $currentWorld = $player->getWorld()->getFolderName();
 
-            // Update player's current world
             $this->playerWorlds[$playerName] = $currentWorld;
 
-            // Update scoreboard visibility and content
             $shouldDisplay = false;
             if ($this->multiWorldActive) {
                 if (isset($this->worldScoreboards[$currentWorld]["lines"])) {
@@ -367,9 +308,6 @@ class Main extends PluginBase implements Listener {
         }
     }
 
-    /**
-     * Updates the flickering titles for all scoreboards
-     */
     public function updateFlickerTitles(): void {
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             if (!isset($this->scoreboards[$player->getName()])) {
@@ -379,14 +317,12 @@ class Main extends PluginBase implements Listener {
             $playerName = $player->getName();
             $worldName = $player->getWorld()->getFolderName();
 
-            // Determine if flicker is enabled for this world
             $isFlickerEnabled = $this->multiWorldActive ? false : $this->flickerEnabled;
             if ($this->multiWorldActive && isset($this->worldScoreboards[$worldName]["flicker"])) {
                 $isFlickerEnabled = $this->worldScoreboards[$worldName]["flicker"];
             }
 
             if ($isFlickerEnabled) {
-                // Increment the title index for this player
                 $this->playerTitleIndices[$playerName] = ($this->playerTitleIndices[$playerName] ?? 0) + 1;
                 $this->hideScoreboard($player);
                 $this->createScoreboard($player);
@@ -394,12 +330,6 @@ class Main extends PluginBase implements Listener {
         }
     }
 
-    /**
-     * Replaces placeholders in a string with actual values
-     * @param string $text
-     * @param Player|null $player
-     * @return string
-     */
     public function replacePlaceholders(string $text, ?Player $player = null): string {
         $placeholders = [
             "%idserver%" => $this->getServerId(),
@@ -422,39 +352,20 @@ class Main extends PluginBase implements Listener {
         );
     }
 
-    /**
-     * Returns the instance of this plugin
-     * @return Main
-     */
     public static function getInstance(): Main {
         return self::$instance;
     }
 
-    /**
-     * Returns the server ID from config
-     * @return string
-     */
     public function getServerId(): string {
         return $this->config->get("server-id", "12345");
     }
 
-    /**
-     * Returns the server date and time in a formatted string
-     * @return string
-     */
+
     public function getTimeServerInfo(): string {
         // Full date-time for compatibility
         return date("Y-m-d H:i:s");
     }
 
-    /**
-     * Handles commands sent by players
-     * @param CommandSender $sender
-     * @param Command $command
-     * @param string $label
-     * @param array $args
-     * @return bool
-     */
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if ($command->getName() === "wai") {
             $serverId = $this->config->get("server-id");
@@ -462,13 +373,10 @@ class Main extends PluginBase implements Listener {
             $serverDescription = $this->config->get("server-description");
             $proxyNetwork = $this->config->get("proxy-network");
             
-            // Getting current date and time
             $dateTime = date("Y-m-d H:i:s");
             
-            // Getting server ping (approximate, based on server TPS)
             $ping = round(1000 / max(1, $this->getServer()->getTicksPerSecondAverage()), 2) . " ms";
 
-            // Sending formatted message to the player (lobbyid not included)
             $message = TextFormat::GOLD . "=== Server Information ===\n" .
                        TextFormat::YELLOW . "Server ID: " . TextFormat::WHITE . $serverId . "\n" .
                        TextFormat::YELLOW . "Server Type: " . TextFormat::WHITE . $serverType . "\n" .
