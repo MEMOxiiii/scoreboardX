@@ -122,5 +122,5 @@ Contributions are welcome! If you'd like to contribute:
 This plugin is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as per the license terms.
 
 ## Credits
-- **Author**: Grok
+- **Author**: MEMOxiiii
 - **Special Thanks**: To the PocketMine-MP community for their support and feedback.
