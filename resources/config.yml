@@ -1,0 +1,147 @@
+# ServerInfo Plugin Configuration
+# This file contains all the settings for the ServerInfo plugin.
+# Follow the instructions below to customize your server information and scoreboard.
+
+# -------------------
+# Server Information
+# -------------------
+# These settings define basic information about your server, which can be displayed using the /wai command.
+
+# The unique ID of your server
+server-id: "g1009l"
+
+# The type of your server (e.g., lobby, bedwars, survival, skywars, etc)
+server-type: "lobby"
+
+# A short description of your server
+server-description: "A fun survival server!"
+
+# The proxy network address (if applicable)
+proxy-network: "waterdogPE"
+
+# The lobby ID for your server (used in scoreboard placeholders like %lobbyid%)
+lobby-id: "lobby_001"
+
+# -------------------
+# Scoreboard Settings
+# -------------------
+# These settings control the scoreboard displayed to players.
+# You can customize the title, lines, and behavior of the scoreboard.
+
+scoreboard:
+  # Enable or disable the scoreboard (true/false)
+  # If set to false, no scoreboard will be displayed to players
+  enabled: true
+
+  # The default title of the scoreboard (used if flicker is disabled)
+  # You can use color codes (e.g., §l for bold, §6 for gold color)
+  title: "§l§6ServerInfo"
+
+  # Enable flickering titles for the default scoreboard (true/false)
+  # If set to true, the scoreboard title will cycle through the titles listed below
+  # Note: This can be overridden for specific worlds in the scoreboards section
+  flicker: false
+
+  # Period between title changes in seconds (if flicker is enabled)
+  # For example, 5 means the title will change every 5 seconds
+  period: 5
+
+  # List of titles to cycle through (if flicker is enabled)
+  # You can use color codes to customize the appearance
+  titles:
+    - "§l§6ServerInfo"
+    - "§l§eServerInfo"
+    - "§l§aServerInfo"
+    - "§l§bServerInfo"
+
+  # Worlds where the scoreboard should be displayed (used if multi_world.active is false)
+  # Add the names of the worlds where you want the scoreboard to appear
+  worlds:
+    - "world"
+
+  # Worlds where the scoreboard should NOT be displayed
+  # Add the names of the worlds where you do NOT want the scoreboard to appear
+  disabled_worlds:
+    - "disabled_world"
+
+  # Default scoreboard lines (used if multi_world.active is false)
+  # These lines will be displayed on the scoreboard for all worlds (if multi_world.active is false)
+  # Available placeholders:
+  # - %playername%: The player's name
+  # - %onlineplayers%: Number of online players
+  # - %maxplayers%: Maximum number of players
+  # - %lobbyid%: Lobby ID from server settings
+  # - %ping%: Player's ping in milliseconds
+  # - %idserver%: Server ID from server settings
+  # - %serverinfo_time%: Current time (HH:MM:SS)
+  # - %serverinfo_date%: Current date (YYYY-MM-DD)
+  # - %serverinfo_datetime%: Current date and time (YYYY-MM-DD HH:MM:SS)
+  lines:
+    - ""
+    - "§l§bPlayer: §f%playername%"
+    - ""
+    - "§l§aOnline: §f%onlineplayers% §7/ §f%maxplayers%"
+    - "§l§cLobby: §f%lobbyid%"
+    - "§l§ePing: §f%ping%"
+    - ""
+    - "§l§6Server: §f%idserver%"
+    - "§l§eTime: §f%serverinfo_time%"
+    - "§l§eDate: §f%serverinfo_date%"
+    - ""
+    - "§l§gplay.server.net"
+
+  # Multi-world scoreboard settings
+  multi_world:
+    # Enable multi-world scoreboards (true/false)
+    # If true, the scoreboard for each world will be taken from the scoreboards section below
+    # If false, the default lines above will be used for all worlds
+    active: false
+
+  # Define specific scoreboards for each world (used if multi_world.active is true)
+  # For each world, you can specify a custom title, enable/disable flicker, set flickering titles, and define lines
+  scoreboards:
+    world:
+      # The title for this world's scoreboard (used if flicker is disabled for this world)
+      title: "§l§bWorld 1"
+      # Enable flickering titles for this world (true/false)
+      # If true, the scoreboard title will cycle through the flicker_titles listed below
+      # If false, the title above will be used
+      flicker: false
+      # List of titles to cycle through for this world (if flicker is enabled)
+      flicker_titles:
+        - "§l§bWorld 1"
+        - "§l§aWorld 1"
+        - "§l§eWorld 1"
+        - "§l§cWorld 1"
+      # The lines to display on the scoreboard for this world
+      lines:
+        - "§l§bPlayer: §f%playername%"
+        - "§l§aOnline: §f%onlineplayers% §7/ §f%maxplayers%"
+        - ""
+        - "§l§6Server: §f%idserver%"
+        - "§l§eTime: §f%serverinfo_time%"
+        - "§l§eDate: §f%serverinfo_date%"
+        - ""
+        - "§l§gplay.server.net"
+    world2:
+      # The title for this world's scoreboard (used if flicker is disabled for this world)
+      title: "§l§cWorld 2"
+      # Enable flickering titles for this world (true/false)
+      flicker: true
+      # List of titles to cycle through for this world (if flicker is enabled)
+      flicker_titles:
+        - "§l§cWorld 2"
+        - "§l§eWorld 2"
+        - "§l§aWorld 2"
+        - "§l§bWorld 2"
+      # The lines to display on the scoreboard for this world
+      lines:
+        - "§l§bPlayer: §f%playername%"
+        - "§l§cLobby: §f%lobbyid%"
+        - "§l§ePing: §f%ping%"
+        - ""
+        - "§l§6Server: §f%idserver%"
+        - "§l§eTime: §f%serverinfo_time%"
+        - "§l§eDate: §f%serverinfo_date%"
+        - ""
+        - "§l§gplay.server.net"

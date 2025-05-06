@@ -1,0 +1,22 @@
+name: Scoreboard
+version: 1.0.0
+main: MEMOxiiii\ServerInfo\Main
+api: 5.0.0
+author: MEMOxiiii
+description: A plugin to display server information with /wai command and custom scoreboard
+commands:
+  wai:
+    description: Displays server information
+    usage: /<command>
+    permission: serverinfo.wai
+  scoreboard:
+    description: Toggles the scoreboard on or off
+    usage: /<command> toggle
+    permission: serverinfo.scoreboard
+permissions:
+  serverinfo.wai:
+    description: Allows use of /wai command
+    default: true
+  serverinfo.scoreboard:
+    description: Allows use of /scoreboard command
+    default: op
