@@ -85,10 +85,8 @@ class Main extends PluginBase implements Listener {
         $this->getLogger()->info("Worlds: " . implode(", ", $this->scoreboardWorlds));
         $this->getLogger()->info("Disabled worlds: " . implode(", ", $this->scoreboardDisabledWorlds));
 
-        // Register event listeners
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
-        // Schedule a repeating task to update scoreboards
         $this->getScheduler()->scheduleRepeatingTask(new class($this) extends Task {
             private Main $plugin;
 
@@ -362,7 +360,6 @@ class Main extends PluginBase implements Listener {
 
 
     public function getTimeServerInfo(): string {
-        // Full date-time for compatibility
         return date("Y-m-d H:i:s");
     }
 
