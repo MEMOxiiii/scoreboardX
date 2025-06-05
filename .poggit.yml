@@ -5,4 +5,5 @@ branches:
 projects:
   scoreboardX:
     path: ""
+    icon: E1.png
 ...
