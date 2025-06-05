@@ -1,6 +1,6 @@
-# ScoreboardPE
+# ScoreboardX
 
-**ScoreboardPE** is a powerful and customizable PocketMine-MP plugin designed to display server information and a dynamic scoreboard for players. With support for multi-world scoreboards, flickering titles, and placeholder replacements, this plugin offers a seamless way to keep players informed about server details such as player count, ping, time, and more.
+**ScoreboardX** is a powerful and customizable PocketMine-MP plugin designed to display server information and a dynamic scoreboard for players. With support for multi-world scoreboards, flickering titles, and placeholder replacements, this plugin offers a seamless way to keep players informed about server details such as player count, ping, time, and more.
 
 ## Features
 - Display server information with the `/wai` command (e.g., server ID, type, description, ping, etc.).
@@ -106,21 +106,10 @@ The plugin generates a `config.yml` file in the `plugins/ScoreboardPE/` folder u
           - "§l§cLobby: §f%lobbyid%"
     ```
 
-## Support
-If you encounter any issues or have questions:
-- **Check the Wiki**: Visit the [Wiki](#) for detailed guides and troubleshooting.
-- **Report Issues**: Open an issue on the [GitHub repository](#).
-- **Community Support**: Join our [Discord server](#) to get help from the community.
 
-## Contributing
-Contributions are welcome! If you'd like to contribute:
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Submit a pull request with a detailed description of your changes.
 
 ## License
 This plugin is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as per the license terms.
 
 ## Credits
 - **Author**: MEMOxiiii
-- **Special Thanks**: To the PocketMine-MP community for their support and feedback.
